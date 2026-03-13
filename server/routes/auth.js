@@ -35,6 +35,15 @@ router.post("/register", async (req, res) => {
     res.status(201).json({ message: "✔ 注册成功，请登录" })
   } catch (err) {
     console.log("register error:", err)
+
+    if (err.code === 11000) {
+      return res.status(400).json({ message: "该邮箱已注册" })
+    }
+
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ message: "用户信息不符合要求" })
+    }
+
     res.status(500).json({ message: "服务器错误，注册失败" })
   }
 })
@@ -50,7 +59,7 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ email })
 
     if (!user) {
-      return res.status(400).json({ message: "用户不存在" })
+      return res.status(400).json({ message: "邮箱或密码错误" })
     }
 
     const validPassword = await bcrypt.compare(password, user.password)
