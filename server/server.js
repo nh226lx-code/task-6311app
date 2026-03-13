@@ -10,25 +10,24 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-mongoose.connect(
-"mongodb+srv://nh226lx_db_user:vSR3fCEIrPV86yoi@cluster0.ck7v3dn.mongodb.net/task6311"
-)
+mongoose
+  .connect(process.env.MONGO_URL || "mongodb+srv://nh226lx_db_user:vSR3fCEIrPV86yoi@cluster0.ck7v3dn.mongodb.net/task6311")
+  .then(() => {
+    console.log("MongoDB connected")
+  })
+  .catch((err) => {
+    console.log("MongoDB error:", err)
+  })
 
-.then(()=>{
-console.log("MongoDB connected")
+app.get("/", (req, res) => {
+  res.send("Server working")
 })
 
-.catch(err=>{
-console.log(err)
-})
+app.use("/api/auth", authRoute)
+app.use("/api/tasks", tasksRoute)
 
-app.get("/",(req,res)=>{
-res.send("Server working")
-})
+const PORT = process.env.PORT || 5000
 
-app.use("/api/auth",authRoute)
-app.use("/api/tasks",tasksRoute)
-
-app.listen(5000,()=>{
-console.log("Server running on port 5000")
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT)
 })

@@ -3,126 +3,134 @@ const User = require("../models/User")
 const bcrypt = require("bcryptjs")
 const crypto = require("crypto")
 
-// 注册
-
-router.post("/register",async(req,res)=>{
-
-try{
-
-const salt = await bcrypt.genSalt(10)
-
-const hashedPassword = await bcrypt.hash(req.body.password,salt)
-
-const newUser = new User({
-
-username:req.body.username,
-email:req.body.email,
-password:hashedPassword
-
+router.get("/ping", (req, res) => {
+  res.json({ message: "auth route working" })
 })
 
-const savedUser = await newUser.save()
+router.post("/register", async (req, res) => {
+  try {
+    const { username, email, password } = req.body
 
-res.status(200).json(savedUser)
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "请填写完整信息" })
+    }
 
-}catch(err){
+    const existingUser = await User.findOne({ email })
 
-res.status(500).json(err)
+    if (existingUser) {
+      return res.status(400).json({ message: "该邮箱已注册" })
+    }
 
-}
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
 
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+    })
+
+    await newUser.save()
+
+    res.status(201).json({ message: "✔ 注册成功，请登录" })
+  } catch (err) {
+    console.log("register error:", err)
+    res.status(500).json({ message: "服务器错误，注册失败" })
+  }
 })
 
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body
 
-// 登录
+    if (!email || !password) {
+      return res.status(400).json({ message: "请输入邮箱和密码" })
+    }
 
-router.post("/login",async(req,res)=>{
+    const user = await User.findOne({ email })
 
-try{
+    if (!user) {
+      return res.status(400).json({ message: "用户不存在" })
+    }
 
-const user = await User.findOne({email:req.body.email})
+    const validPassword = await bcrypt.compare(password, user.password)
 
-if(!user) return res.status(400).json("用户不存在")
+    if (!validPassword) {
+      return res.status(400).json({ message: "邮箱或密码错误" })
+    }
 
-const validPassword = await bcrypt.compare(req.body.password,user.password)
-
-if(!validPassword) return res.status(400).json("密码错误")
-
-res.status(200).json(user)
-
-}catch(err){
-
-res.status(500).json(err)
-
-}
-
+    res.status(200).json({
+      message: "登录成功",
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+    })
+  } catch (err) {
+    console.log("login error:", err)
+    res.status(500).json({ message: "登录失败" })
+  }
 })
 
+router.post("/reset-request", async (req, res) => {
+  try {
+    const { email } = req.body
 
-// 请求重置密码
+    if (!email) {
+      return res.status(400).json({ message: "请输入邮箱" })
+    }
 
-router.post("/reset-request",async(req,res)=>{
+    const user = await User.findOne({ email })
 
-try{
+    if (!user) {
+      return res.status(400).json({ message: "邮箱不存在" })
+    }
 
-const user = await User.findOne({email:req.body.email})
+    const token = crypto.randomBytes(32).toString("hex")
 
-if(!user) return res.status(400).json("邮箱不存在")
+    user.resetToken = token
+    user.resetExpire = Date.now() + 3600000
 
-const token = crypto.randomBytes(32).toString("hex")
+    await user.save()
 
-user.resetToken = token
-
-user.resetExpire = Date.now() + 3600000
-
-await user.save()
-
-res.status(200).json({
-message:"reset token created",
-token:token
+    res.status(200).json({
+      message: "重置 Token 已生成",
+      token,
+    })
+  } catch (err) {
+    console.log("reset request error:", err)
+    res.status(500).json({ message: "请求失败" })
+  }
 })
 
-}catch(err){
+router.post("/reset-password", async (req, res) => {
+  try {
+    const { token, password } = req.body
 
-res.status(500).json(err)
+    if (!token || !password) {
+      return res.status(400).json({ message: "请输入 Token 和新密码" })
+    }
 
-}
+    const user = await User.findOne({
+      resetToken: token,
+      resetExpire: { $gt: Date.now() },
+    })
 
-})
+    if (!user) {
+      return res.status(400).json({ message: "Token 无效或已过期" })
+    }
 
+    const salt = await bcrypt.genSalt(10)
+    user.password = await bcrypt.hash(password, salt)
+    user.resetToken = undefined
+    user.resetExpire = undefined
 
-// 重置密码
+    await user.save()
 
-router.post("/reset-password",async(req,res)=>{
-
-try{
-
-const user = await User.findOne({
-
-resetToken:req.body.token,
-resetExpire:{ $gt: Date.now() }
-
-})
-
-if(!user) return res.status(400).json("token无效")
-
-const salt = await bcrypt.genSalt(10)
-
-user.password = await bcrypt.hash(req.body.password,salt)
-
-user.resetToken = undefined
-user.resetExpire = undefined
-
-await user.save()
-
-res.status(200).json("密码已更新")
-
-}catch(err){
-
-res.status(500).json(err)
-
-}
-
+    res.status(200).json({ message: "✔ 密码重置成功，请登录" })
+  } catch (err) {
+    console.log("reset password error:", err)
+    res.status(500).json({ message: "重置失败" })
+  }
 })
 
 module.exports = router

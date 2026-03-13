@@ -1,84 +1,81 @@
 import { useState } from "react"
 import axios from "axios"
-import { useNavigate } from "react-router-dom"
-import "../App.css"
 
-export default function Login() {
+const API = "https://task-6311app.onrender.com"
 
-  const navigate = useNavigate()
+function Login({ setPage }) {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [message, setMessage] = useState("")
+  const [messageType, setMessageType] = useState("")
 
-  const [email,setEmail] = useState("")
-  const [password,setPassword] = useState("")
-  const [message,setMessage] = useState("")
-  const [error,setError] = useState(false)
+  const login = async () => {
+    if (!email || !password) {
+      setMessage("✖ 请输入邮箱和密码")
+      setMessageType("message-error")
+      return
+    }
 
-  const handleLogin = async (e) => {
-    e.preventDefault()
+    try {
+      await axios.post(`${API}/api/auth/login`, {
+        email,
+        password,
+      })
 
-    try{
+      setPage("home")
+    } catch (err) {
+      const backendMessage =
+        err?.response?.data?.message ||
+        err?.response?.data ||
+        "邮箱或密码错误"
 
-      const res = await axios.post(
-        "https://task-6311app.onrender.com/api/auth/login",
-        { email,password }
+      setMessage(
+        backendMessage.startsWith("✖")
+          ? backendMessage
+          : `✖ ${backendMessage}`
       )
-
-      localStorage.setItem("userId",res.data._id)
-
-      navigate("/dashboard")
-
-    }catch(err){
-
-      setError(true)
-      setMessage("✖ 邮箱或密码错误")
-
+      setMessageType("message-error")
     }
   }
 
-  return(
+  return (
+    <div className="card">
+      <div className="title">用户登录</div>
 
-    <div className="loginPage">
+      <input
+        placeholder="邮箱"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
 
-      <div className="loginCard">
+      <input
+        type="password"
+        placeholder="密码"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
 
-        <h2>用户登录</h2>
+      <button onClick={login}>登录</button>
 
-        <form onSubmit={handleLogin}>
-
-          <input
-            placeholder="邮箱"
-            onChange={(e)=>setEmail(e.target.value)}
-          />
-
-          <input
-            type="password"
-            placeholder="密码"
-            onChange={(e)=>setPassword(e.target.value)}
-          />
-
-          <button>登录</button>
-
-        </form>
-
-        {message && (
-          <p className={error ? "errorMsg" : "successMsg"}>
-            {message}
-          </p>
-        )}
-
-        <div className="loginLinks">
-
-          <span onClick={()=>navigate("/register")}>
-            注册账号
-          </span>
-
-          <span onClick={()=>navigate("/reset")}>
-            忘记密码
-          </span>
-
+      {message && (
+        <div className={`form-message ${messageType}`}>
+          {message}
         </div>
+      )}
 
+      <div className="login-links">
+        <span className="link-text" onClick={() => setPage("register")}>
+          注册账号
+        </span>
+
+        <span className="link-divider">|</span>
+
+        <span className="link-text" onClick={() => setPage("reset")}>
+          忘记密码
+        </span>
       </div>
-
     </div>
   )
 }
+
+export default Login
