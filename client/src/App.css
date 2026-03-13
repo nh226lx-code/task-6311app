@@ -1,0 +1,111 @@
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#1f4fb3;
+font-family:"PingFang SC","Microsoft YaHei",Arial;
+}
+
+/* 卡片 */
+
+.card{
+width:420px;
+background:#f9fafb;
+padding:40px;
+border-radius:12px;
+box-shadow:0 28px 65px rgba(0,0,0,0.35);
+box-sizing:border-box;
+}
+
+/* 标题 */
+
+.title{
+text-align:center;
+font-size:24px;
+margin-bottom:26px;
+color:#1f2937;
+}
+
+/* 输入框 */
+
+input{
+width:100%;
+height:42px;
+padding:0 14px;
+margin-bottom:14px;
+border:1px solid #e5e7eb;
+border-radius:6px;
+font-size:14px;
+box-sizing:border-box;
+}
+
+input:focus{
+outline:none;
+border-color:#2c7be5;
+}
+
+/* 按钮 */
+
+button{
+width:100%;
+height:42px;
+border:none;
+border-radius:6px;
+background:#2c7be5;
+color:white;
+font-size:15px;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+button:hover{
+background:#1f6fd6;
+}
+
+/* 表单反馈 */
+
+.form-message{
+margin-top:14px;
+text-align:center;
+font-size:14px;
+line-height:1.4;
+}
+
+/* 成功 */
+
+.message-success{
+color:#16a34a;
+}
+
+/* 错误 */
+
+.message-error{
+color:#dc2626;
+}
+
+/* 登录页面链接 */
+
+.login-links{
+margin-top:18px;
+display:flex;
+justify-content:center;
+align-items:center;
+gap:12px;
+font-size:14px;
+}
+
+.link-text{
+color:#2c7be5;
+cursor:pointer;
+}
+
+.link-text:hover{
+color:#1f6fd6;
+}
+
+.link-divider{
+color:#9ca3af;
+}

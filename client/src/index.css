@@ -1,0 +1,111 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "PingFang SC", "Microsoft YaHei", Arial;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* 企业深蓝背景 */
+
+  background-color: #1f4fb3;
+
+  /* 轻微纹理 */
+
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.04),
+      rgba(0,0,0,0.05)
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.02),
+      rgba(255,255,255,0.02) 2px,
+      transparent 2px,
+      transparent 6px
+    );
+}
+
+/* 登录卡片 */
+
+.card {
+  width: 420px;
+  background: #f9fafb;
+
+  padding: 40px;
+  border-radius: 12px;
+
+  box-shadow: 0 30px 70px rgba(0,0,0,0.35);
+
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+/* 标题 */
+
+.title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 26px;
+  color: #1f2937;
+}
+
+/* 输入框 */
+
+input {
+  width: 100%;
+  padding: 11px;
+  margin-bottom: 14px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2c7be5;
+}
+
+/* 按钮 */
+
+button {
+  width: 100%;
+  padding: 11px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: #2c7be5;
+  color: white;
+
+  font-size: 15px;
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #1a68d1;
+}
+
+/* 切换 */
+
+.switch {
+  margin-top: 14px;
+  text-align: center;
+
+  font-size: 14px;
+  color: #2c7be5;
+  cursor: pointer;
+}
