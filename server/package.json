@@ -1,7 +1,7 @@
 {
-  "name": "server",
+  "name": "task-6311app-server",
   "version": "1.0.0",
-  "description": "task-6311app backend",
+  "description": "backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
