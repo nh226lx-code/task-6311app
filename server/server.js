@@ -10,12 +10,13 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-const MONGO_URL =
-  process.env.MONGO_URL ||
-  "mongodb+srv://nh226lx_db_user:vSR3fCEIrPV86yoi@cluster0.ck7v3dn.mongodb.net/task6311"
+// 使用 Vercel / Render 环境变量
+const MONGO_URI =
+  process.env.MONGO_URI ||
+  "mongodb+srv://nh226lx_db_user:Mydb123456@cluster0.ck7v3dn.mongodb.net/task6311?retryWrites=true&w=majority"
 
 app.get("/", (req, res) => {
-  res.send("Server working")
+  res.send("API running")
 })
 
 app.use("/api/auth", authRoute)
@@ -24,7 +25,7 @@ app.use("/api/tasks", tasksRoute)
 const PORT = process.env.PORT || 5000
 
 mongoose
-  .connect(MONGO_URL)
+  .connect(MONGO_URI)
   .then(() => {
     console.log("MongoDB connected")
 
@@ -33,6 +34,6 @@ mongoose
     })
   })
   .catch((err) => {
-    console.log("MongoDB error:", err)
+    console.log("MongoDB connection error:", err)
     process.exit(1)
   })
