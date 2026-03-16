@@ -1,7 +1,7 @@
 import { useState } from "react"
 import axios from "axios"
 
-const API = "https://task-6311app-server.onrender.com"
+const API = "https://task6311-api.onrender.com"
 
 function Login({ setPage }) {
   const [email, setEmail] = useState("")
