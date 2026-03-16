@@ -3,7 +3,7 @@ import axios from "axios"
 import TaskItem from "./components/TaskItem"
 import "./dashboard.css"
 
-const API = "http://localhost:5000"
+const API = "https://task6311-api.onrender.com"
 
 function Dashboard() {
 
@@ -11,35 +11,44 @@ function Dashboard() {
   const [taskText, setTaskText] = useState("")
 
   const loadTasks = async () => {
-
-    const res = await axios.get(`${API}/api/tasks`)
-    setTasks(res.data)
-
+    try {
+      const res = await axios.get(`${API}/api/tasks`)
+      setTasks(res.data)
+    } catch (err) {
+      console.log("load tasks error:", err)
+    }
   }
 
   useEffect(() => {
-
     loadTasks()
-
   }, [])
 
   const addTask = async () => {
 
     if (!taskText.trim()) return
 
-    await axios.post(`${API}/api/tasks`, {
-      title: taskText
-    })
+    try {
+      await axios.post(`${API}/api/tasks`, {
+        title: taskText
+      })
 
-    setTaskText("")
-    loadTasks()
+      setTaskText("")
+      loadTasks()
+
+    } catch (err) {
+      console.log("add task error:", err)
+    }
 
   }
 
   const deleteTask = async (id) => {
 
-    await axios.delete(`${API}/api/tasks/${id}`)
-    loadTasks()
+    try {
+      await axios.delete(`${API}/api/tasks/${id}`)
+      loadTasks()
+    } catch (err) {
+      console.log("delete task error:", err)
+    }
 
   }
 
