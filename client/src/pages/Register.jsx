@@ -1,7 +1,7 @@
 import { useState } from "react"
 import axios from "axios"
 
-const API = "https://task-6311app.onrender.com"
+const API = "https://task-6311app-server.onrender.com"
 
 function Register({ setPage }) {
   const [username, setUsername] = useState("")
